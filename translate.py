@@ -2,7 +2,7 @@ import streamlit as st
 from deep_translator import GoogleTranslator
 from gtts import gTTS
 
-st.title("English → Hindi Translator with Voice")
+st.title("English → Hindi Translator")
 
 english_text = st.text_input("Enter English sentence")
 
