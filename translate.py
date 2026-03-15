@@ -1,22 +1,46 @@
 import streamlit as st
+import speech_recognition as sr
 from deep_translator import GoogleTranslator
 from gtts import gTTS
+import base64
 
-st.title("English → Hindi Translator with Voice")
+st.title("🎤 Voice Translator (English → Hindi)")
 
-text = st.text_input("Enter English sentence")
+recognizer = sr.Recognizer()
 
-if st.button("Translate and Speak"):
+if st.button("🎙️ Speak"):
 
-    # translate
-    hindi_text = GoogleTranslator(source='en', target='hi').translate(text)
+    with sr.Microphone() as source:
+        st.write("Listening...")
+        audio = recognizer.listen(source)
 
-    st.subheader("Hindi Translation")
-    st.write(hindi_text)
+        try:
+            # speech to text
+            text = recognizer.recognize_google(audio)
+            st.write("You said:", text)
 
-    # text to speech
-    tts = gTTS(text=hindi_text, lang='hi')
-    tts.save("speech.mp3")
+            # translate
+            hindi = GoogleTranslator(source='en', target='hi').translate(text)
+            st.subheader("Hindi Translation")
+            st.write(hindi)
 
-    audio_file = open("speech.mp3", "rb")
-    st.audio(audio_file.read(), format="audio/mp3")
+            # convert to speech
+            tts = gTTS(text=hindi, lang='hi')
+            tts.save("speech.mp3")
+
+            # autoplay
+            with open("speech.mp3", "rb") as f:
+                audio_bytes = f.read()
+
+            b64 = base64.b64encode(audio_bytes).decode()
+
+            audio_html = f"""
+            <audio autoplay>
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+            </audio>
+            """
+
+            st.markdown(audio_html, unsafe_allow_html=True)
+
+        except Exception as e:
+            st.error("Could not recognize speech")
