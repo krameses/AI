@@ -1,18 +1,15 @@
 import streamlit as st
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from gtts import gTTS
 
 st.title("English → Hindi Translator with Voice")
 
-# user input
-english_text = st.text_input("Enter English sentence")
+text = st.text_input("Enter English sentence")
 
 if st.button("Translate and Speak"):
 
     # translate
-    translator = Translator()
-    translated = translator.translate(english_text, src='en', dest='hi')
-    hindi_text = translated.text
+    hindi_text = GoogleTranslator(source='en', target='hi').translate(text)
 
     st.subheader("Hindi Translation")
     st.write(hindi_text)
@@ -21,8 +18,5 @@ if st.button("Translate and Speak"):
     tts = gTTS(text=hindi_text, lang='hi')
     tts.save("speech.mp3")
 
-    # play audio in browser
     audio_file = open("speech.mp3", "rb")
-    audio_bytes = audio_file.read()
-
-    st.audio(audio_bytes, format="audio/mp3")
+    st.audio(audio_file.read(), format="audio/mp3")
