@@ -21,4 +21,4 @@ if st.button("Translate and Speak"):
     with open("speech.mp3", "rb") as audio_file:
         audio_bytes = audio_file.read()
 
-    st.audio(audio_bytes, format="audio/mp3")
+    st.audio(audio_bytes, format="audio/mp3", autoplay=True)
